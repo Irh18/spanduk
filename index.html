@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Fokus</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .harga-wrapper {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .harga-wrapper span {
+      background: #eee;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      font-size: 16px;
+      color: #444;
+    }
+
+    #harga {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      font-size: 16px;
+    }
+
+    .angka-group {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .angka-group input {
+      width: 50%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #5a67d8;
+      box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.2);
+    }
+
+    .hasil {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      background: #f0f0f0;
+      padding: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="kalkulator">
+    <h2>Kalkulator</h2>
+
+    <div class="harga-wrapper">
+      <span>Rp</span>
+      <input type="text" id="harga" value="20.000" placeholder="Harga">
+    </div>
+
+    <div class="angka-group">
+      <input type="number" id="angka1" step="any" placeholder="Angka 1" tabindex="1">
+      <input type="number" id="angka2" step="any" placeholder="Angka 2" tabindex="2">
+    </div>
+
+    <div class="hasil" id="hasil" onclick="salinHasil()">Rp 0</div>
+  </div>
+
+  <script>
+    function formatRibuan(angka) {
+      return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function parseHarga(str) {
+      return parseInt(str.replace(/\./g, '')) || 0;
+    }
+
+    function updateHasil() {
+      let harga = parseHarga(document.getElementById("harga").value);
+      let angka1 = parseFloat(document.getElementById("angka1").value) || 0;
+      let angka2 = parseFloat(document.getElementById("angka2").value) || 0;
+
+      let total = harga * angka1 * angka2;
+
+      if (total >= 1000000) {
+        total = Math.round(total / 1000) * 1000;
+      }
+
+      document.getElementById("hasil").textContent = "Rp " + formatRibuan(Math.round(total));
+    }
+
+    function salinHasil() {
+      const hasilText = document.getElementById("hasil").textContent;
+      // Menghapus simbol 'Rp' dan titik untuk menyalin angka utuh saja
+      const angkaUtuh = hasilText.replace('Rp ', '').replace(/\./g, '');
+      navigator.clipboard.writeText(angkaUtuh).then(() => {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Berhasil disalin!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      });
+    }
+
+    // Format ulang harga saat blur
+    document.getElementById("harga").addEventListener("blur", function () {
+      let angka = parseHarga(this.value);
+      this.value = formatRibuan(angka);
+    });
+
+    document.getElementById("harga").addEventListener("input", updateHasil);
+    document.getElementById("angka1").addEventListener("input", updateHasil);
+    document.getElementById("angka2").addEventListener("input", updateHasil);
+
+    // Fokus awal ke angka1
+    window.onload = () => {
+      document.getElementById("angka1").focus();
+      updateHasil();
+    };
+
+    // Simpan input mana yang sedang aktif
+    let lastFocused = "angka1";
+
+    document.getElementById("angka1").addEventListener("focus", () => {
+      lastFocused = "angka1";
+    });
+
+    document.getElementById("angka2").addEventListener("focus", () => {
+      lastFocused = "angka2";
+    });
+
+    // Tangani Tab dan Shift+Tab
+    document.getElementById("angka1").addEventListener("keydown", (e) => {
+      if (e.key === "Tab" && e.shiftKey) {
+        e.preventDefault();
+        document.getElementById("angka2").focus();
+      }
+    });
+
+    document.getElementById("angka2").addEventListener("keydown", (e) => {
+      if (e.key === "Tab" && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById("angka1").focus();
+        document.getElementById("angka1").select();  // Pilih semua teks pada angka 1
+      }
+    });
+
+    // Klik di luar akan fokus ulang ke input terakhir
+    document.addEventListener('click', function (e) {
+      const container = document.getElementById("kalkulator");
+      if (!container.contains(e.target)) {
+        document.getElementById(lastFocused).focus();
+      }
+    });
+  </script>
+
+</body>
+</html>
