@@ -2,115 +2,120 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kalkulator Fokus</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      padding: 0;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f9f9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #1f2527;
     }
 
     .container {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      background: #2d333b;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       width: 100%;
-      max-width: 340px;
+      max-width: 360px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      transition: all 0.3s ease;
+      gap: 16px;
     }
 
     h2 {
-      margin-bottom: 20px;
-      color: #333;
+      font-size: 24px;
+      font-weight: 600;
+      color: #e2e8f0;
+      text-align: center;
     }
 
-    .harga-wrapper {
-      width: 100%;
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-wrapper {
+      position: relative;
       display: flex;
       align-items: center;
-      margin-bottom: 12px;
     }
 
-    .harga-wrapper span {
-      background: #eee;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-right: none;
-      border-radius: 8px 0 0 8px;
-      font-size: 16px;
-      color: #444;
-    }
-
-    #harga {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-left: none;
-      border-radius: 0 8px 8px 0;
+    .input-wrapper span {
+      position: absolute;
+      left: 12px;
+      color: #94a3b8;
       font-size: 16px;
     }
 
-    .angka-group {
-      display: flex;
+    input {
       width: 100%;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .angka-group input {
-      width: 50%;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
+      padding: 12px 12px 12px 40px;
+      border: 1px solid #4b5563;
       border-radius: 8px;
       font-size: 16px;
+      background: #374151;
+      color: #e2e8f0;
+      transition: border-color 0.2s ease;
     }
 
     input:focus {
       outline: none;
-      border-color: #5a67d8;
-      box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.2);
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+    }
+
+    input::placeholder {
+      color: #9ca3af;
+    }
+
+    .angka-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
     .hasil {
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      background: #f0f0f0;
-      padding: 15px;
+      text-align: center;
+      padding: 16px;
+      background: #4b5563;
       border-radius: 8px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #e2e8f0;
       cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .hasil:hover {
+      background: #6b7280;
     }
   </style>
 </head>
 <body>
-
   <div class="container" id="kalkulator">
     <h2>Kalkulator</h2>
-
-    <div class="harga-wrapper">
-      <span>Rp</span>
-      <input type="text" id="harga" value="20.000" placeholder="Harga">
+    <div class="input-group">
+      <div class="input-wrapper">
+        <span>Rp</span>
+        <input type="text" id="harga" value="20000" placeholder="Harga">
+      </div>
+      <div class="angka-group">
+        <input type="number" id="angka1" step="any"  tabindex="1">
+        <input type="number" id="angka2" step="any"  tabindex="2">
+      </div>
     </div>
-
-    <div class="angka-group">
-      <input type="number" id="angka1" step="any" placeholder="Angka 1" tabindex="1">
-      <input type="number" id="angka2" step="any" placeholder="Angka 2" tabindex="2">
-    </div>
-
     <div class="hasil" id="hasil" onclick="salinHasil()">Rp 0</div>
   </div>
 
@@ -121,6 +126,20 @@
 
     function parseHarga(str) {
       return parseInt(str.replace(/\./g, '')) || 0;
+    }
+
+    function formatHargaInput(input) {
+      const cursorPos = input.selectionStart;
+      const originalLength = input.value.length;
+
+      let angka = parseHarga(input.value);
+      const formatted = formatRibuan(angka);
+      input.value = formatted;
+
+      const newLength = formatted.length;
+      const diff = newLength - originalLength;
+      const newCursorPos = cursorPos + diff;
+      input.setSelectionRange(newCursorPos, newCursorPos);
     }
 
     function updateHasil() {
@@ -139,7 +158,6 @@
 
     function salinHasil() {
       const hasilText = document.getElementById("hasil").textContent;
-      // Menghapus simbol 'Rp' dan titik untuk menyalin angka utuh saja
       const angkaUtuh = hasilText.replace('Rp ', '').replace(/\./g, '');
       navigator.clipboard.writeText(angkaUtuh).then(() => {
         Swal.fire({
@@ -148,28 +166,36 @@
           icon: 'success',
           title: 'Berhasil disalin!',
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
+          background: '#4b5563',
+          color: '#e2e8f0'
         });
       });
     }
 
-    // Format ulang harga saat blur
-    document.getElementById("harga").addEventListener("blur", function () {
-      let angka = parseHarga(this.value);
-      this.value = formatRibuan(angka);
+    document.getElementById("harga").addEventListener("input", function () {
+      formatHargaInput(this);
+      updateHasil();
     });
 
-    document.getElementById("harga").addEventListener("input", updateHasil);
     document.getElementById("angka1").addEventListener("input", updateHasil);
     document.getElementById("angka2").addEventListener("input", updateHasil);
 
-    // Fokus awal ke angka1
+    // Tangani Tab pada input harga
+    document.getElementById("harga").addEventListener("keydown", (e) => {
+      if (e.key === "Tab" && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById("angka1").focus();
+        document.getElementById("angka1").select();
+      }
+    });
+
     window.onload = () => {
+      formatHargaInput(document.getElementById("harga"));
       document.getElementById("angka1").focus();
       updateHasil();
     };
 
-    // Simpan input mana yang sedang aktif
     let lastFocused = "angka1";
 
     document.getElementById("angka1").addEventListener("focus", () => {
@@ -180,11 +206,14 @@
       lastFocused = "angka2";
     });
 
-    // Tangani Tab dan Shift+Tab
     document.getElementById("angka1").addEventListener("keydown", (e) => {
       if (e.key === "Tab" && e.shiftKey) {
         e.preventDefault();
+        document.getElementById("harga").focus();
+      } else if (e.key === "Tab" && !e.shiftKey) {
+        e.preventDefault();
         document.getElementById("angka2").focus();
+        document.getElementById("angka2").select();
       }
     });
 
@@ -192,11 +221,14 @@
       if (e.key === "Tab" && !e.shiftKey) {
         e.preventDefault();
         document.getElementById("angka1").focus();
-        document.getElementById("angka1").select();  // Pilih semua teks pada angka 1
+        document.getElementById("angka1").select();
+      } else if (e.key === "Tab" && e.shiftKey) {
+        e.preventDefault();
+        document.getElementById("angka1").focus();
+        document.getElementById("angka1").select();
       }
     });
 
-    // Klik di luar akan fokus ulang ke input terakhir
     document.addEventListener('click', function (e) {
       const container = document.getElementById("kalkulator");
       if (!container.contains(e.target)) {
@@ -204,6 +236,5 @@
       }
     });
   </script>
-
 </body>
 </html>
