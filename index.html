@@ -1,240 +1,383 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kalkulator Fokus</title>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Tiga-Hasil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f8fafc;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --radius: 16px;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
 
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #1f2527;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-    .container {
-      background: #2d333b;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: var(--secondary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-    h2 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #e2e8f0;
-      text-align: center;
-    }
+        .calculator-card {
+            background: var(--dark-light);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+        .calculator-header {
+            background: var(--dark);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
+        .calculator-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    .input-wrapper span {
-      position: absolute;
-      left: 12px;
-      color: #94a3b8;
-      font-size: 16px;
-    }
+        .calculator-subtitle {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
 
-    input {
-      width: 100%;
-      padding: 12px 12px 12px 40px;
-      border: 1px solid #4b5563;
-      border-radius: 8px;
-      font-size: 16px;
-      background: #374151;
-      color: #e2e8f0;
-      transition: border-color 0.2s ease;
-    }
+        .calculator-body {
+            padding: 25px;
+        }
 
-    input:focus {
-      outline: none;
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-    }
+        .input-group {
+            margin-bottom: 25px;
+        }
 
-    input::placeholder {
-      color: #9ca3af;
-    }
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
 
-    .angka-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 2px solid rgba(100, 116, 139, 0.3);
+            border-radius: 12px;
+            color: var(--secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
 
-    .hasil {
-      text-align: center;
-      padding: 16px;
-      background: #4b5563;
-      border-radius: 8px;
-      font-size: 20px;
-      font-weight: 600;
-      color: #e2e8f0;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
 
-    .hasil:hover {
-      background: #6b7280;
-    }
-  </style>
+        .input-field::placeholder {
+            color: rgba(100, 116, 139, 0.7);
+        }
+
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .result-card {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .result-card:hover {
+            background: rgba(30, 41, 59, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .result-icon {
+            color: var(--primary);
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover .result-icon {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .calculator-footer {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .input-col {
+            flex: 1;
+        }
+
+        /* Animasi untuk hasil yang berubah */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .value-updated {
+            animation: pulse 0.5s ease;
+        }
+
+        /* Responsif untuk layar kecil */
+        @media (max-width: 480px) {
+            .calculator-body {
+                padding: 20px;
+            }
+            
+            .input-field {
+                padding: 12px;
+            }
+            
+            .result-card {
+                padding: 15px;
+            }
+            
+            .result-value {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container" id="kalkulator">
-    <h2>Kalkulator</h2>
-    <div class="input-group">
-      <div class="input-wrapper">
-        <span>Rp</span>
-        <input type="text" id="harga" value="20000" placeholder="Harga">
-      </div>
-      <div class="angka-group">
-        <input type="number" id="angka1" step="any"  tabindex="1">
-        <input type="number" id="angka2" step="any"  tabindex="2">
-      </div>
+    <div class="calculator-card">
+        <div class="calculator-header">
+            <h1 class="calculator-title">Kalkulator Tiga Harga</h1>
+            <p class="calculator-subtitle">Hitung harga berdasarkan perkalian angka</p>
+        </div>
+        
+        <div class="calculator-body">
+            <div class="input-group">
+                <label class="input-label" for="angka1">Angka Pertama</label>
+                <input type="number" id="angka1" step="any" tabindex="1" placeholder="Masukkan angka pertama" class="input-field">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label" for="angka2">Angka Kedua</label>
+                <input type="number" id="angka2" step="any" tabindex="2" placeholder="Masukkan angka kedua" class="input-field">
+            </div>
+            
+            <div class="results-container" id="hasil-container">
+                <div class="result-card" id="hasil_20k" onclick="salinHasil('hasil_20k')">
+                    <div class="result-info">
+                        <span class="result-label">Harga 20K</span>
+                        <span class="result-value" id="value_20k">Rp 0</span>
+                    </div>
+                    <div class="result-icon">
+                        <i class="fas fa-copy"></i>
+                    </div>
+                </div>
+                
+                <div class="result-card" id="hasil_50k" onclick="salinHasil('hasil_50k')">
+                    <div class="result-info">
+                        <span class="result-label">Harga 50K</span>
+                        <span class="result-value" id="value_50k">Rp 0</span>
+                    </div>
+                    <div class="result-icon">
+                        <i class="fas fa-copy"></i>
+                    </div>
+                </div>
+                
+                <div class="result-card" id="hasil_100k" onclick="salinHasil('hasil_100k')">
+                    <div class="result-info">
+                        <span class="result-label">Harga 100K</span>
+                        <span class="result-value" id="value_100k">Rp 0</span>
+                    </div>
+                    <div class="result-icon">
+                        <i class="fas fa-copy"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="calculator-footer">
+            <p>Klik pada hasil untuk menyalin ke clipboard</p>
+        </div>
     </div>
-    <div class="hasil" id="hasil" onclick="salinHasil()">Rp 0</div>
-  </div>
 
-  <script>
-    function formatRibuan(angka) {
-      return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+    <script>
+        // Fungsi utilitas
+        function formatRibuan(angka) {
+            return Math.round(angka).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        
+        // Fungsi utama perhitungan
+        function calculateTotal(hargaDasar, angka1, angka2) {
+            let total = hargaDasar * angka1 * angka2;
+            
+            // Logika pembulatan asli (pembulatan ke ribuan terdekat jika total >= 1.000.000)
+            if (total >= 1000000) {
+                total = Math.round(total / 1000) * 1000;
+            }
+            return Math.round(total);
+        }
 
-    function parseHarga(str) {
-      return parseInt(str.replace(/\./g, '')) || 0;
-    }
+        function updateHasil() {
+            // Ambil input Angka 1 dan Angka 2
+            let angka1 = parseFloat(document.getElementById("angka1").value) || 0;
+            let angka2 = parseFloat(document.getElementById("angka2").value) || 0;
+            
+            // Definisikan semua harga yang digunakan
+            const HARGA_20K = 20000;
+            const HARGA_50K = 50000;
+            const HARGA_100K = 100000;
 
-    function formatHargaInput(input) {
-      const cursorPos = input.selectionStart;
-      const originalLength = input.value.length;
+            // Hitung 3 hasil
+            const total_20k = calculateTotal(HARGA_20K, angka1, angka2);
+            const total_50k = calculateTotal(HARGA_50K, angka1, angka2);
+            const total_100k = calculateTotal(HARGA_100K, angka1, angka2);
 
-      let angka = parseHarga(input.value);
-      const formatted = formatRibuan(angka);
-      input.value = formatted;
+            // Tampilkan hasil di elemen yang sesuai
+            const value20k = document.getElementById("value_20k");
+            const value50k = document.getElementById("value_50k");
+            const value100k = document.getElementById("value_100k");
+            
+            // Tambahkan animasi saat nilai berubah
+            if (value20k.textContent !== "Rp " + formatRibuan(total_20k)) {
+                value20k.textContent = "Rp " + formatRibuan(total_20k);
+                value20k.classList.add("value-updated");
+                setTimeout(() => value20k.classList.remove("value-updated"), 500);
+            }
+            
+            if (value50k.textContent !== "Rp " + formatRibuan(total_50k)) {
+                value50k.textContent = "Rp " + formatRibuan(total_50k);
+                value50k.classList.add("value-updated");
+                setTimeout(() => value50k.classList.remove("value-updated"), 500);
+            }
+            
+            if (value100k.textContent !== "Rp " + formatRibuan(total_100k)) {
+                value100k.textContent = "Rp " + formatRibuan(total_100k);
+                value100k.classList.add("value-updated");
+                setTimeout(() => value100k.classList.remove("value-updated"), 500);
+            }
+        }
 
-      const newLength = formatted.length;
-      const diff = newLength - originalLength;
-      const newCursorPos = cursorPos + diff;
-      input.setSelectionRange(newCursorPos, newCursorPos);
-    }
+        function salinHasil(elementId) {
+            const resultCard = document.getElementById(elementId);
+            const hasilText = resultCard.querySelector(".result-value").textContent;
+            // Hapus 'Rp ' dan semua titik
+            const angkaUtuh = hasilText.replace('Rp ', '').replace(/\./g, '');
+            
+            // Tambahkan efek visual saat menyalin
+            resultCard.style.background = "rgba(99, 102, 241, 0.2)";
+            setTimeout(() => {
+                resultCard.style.background = "";
+            }, 300);
+            
+            navigator.clipboard.writeText(angkaUtuh).then(() => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Nilai disalin: ' + formatRibuan(angkaUtuh),
+                    showConfirmButton: false,
+                    timer: 1500,
+                    background: '#1e293b',
+                    color: '#e2e8f0',
+                    iconColor: '#10b981'
+                });
+            });
+        }
 
-    function updateHasil() {
-      let harga = parseHarga(document.getElementById("harga").value);
-      let angka1 = parseFloat(document.getElementById("angka1").value) || 0;
-      let angka2 = parseFloat(document.getElementById("angka2").value) || 0;
+        // --- Event Listeners dan Logika Fokus ---
+        const inputAngka1 = document.getElementById("angka1");
+        const inputAngka2 = document.getElementById("angka2");
 
-      let total = harga * angka1 * angka2;
-
-      if (total >= 1000000) {
-        total = Math.round(total / 1000) * 1000;
-      }
-
-      document.getElementById("hasil").textContent = "Rp " + formatRibuan(Math.round(total));
-    }
-
-    function salinHasil() {
-      const hasilText = document.getElementById("hasil").textContent;
-      const angkaUtuh = hasilText.replace('Rp ', '').replace(/\./g, '');
-      navigator.clipboard.writeText(angkaUtuh).then(() => {
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Berhasil disalin!',
-          showConfirmButton: false,
-          timer: 1500,
-          background: '#4b5563',
-          color: '#e2e8f0'
+        inputAngka1.addEventListener("input", updateHasil);
+        inputAngka2.addEventListener("input", updateHasil);
+        
+        // Tab Handler (Looping antara Angka 1 dan Angka 2)
+        inputAngka1.addEventListener("keydown", (e) => {
+            if (e.key === "Tab" && !e.shiftKey) {
+                e.preventDefault();
+                inputAngka2.focus();
+                inputAngka2.select();
+            }
         });
-      });
-    }
 
-    document.getElementById("harga").addEventListener("input", function () {
-      formatHargaInput(this);
-      updateHasil();
-    });
+        inputAngka2.addEventListener("keydown", (e) => {
+            if (e.key === "Tab") {
+                e.preventDefault();
+                // Tab ke depan atau ke belakang akan kembali ke Angka 1
+                inputAngka1.focus();
+                inputAngka1.select();
+            }
+        });
 
-    document.getElementById("angka1").addEventListener("input", updateHasil);
-    document.getElementById("angka2").addEventListener("input", updateHasil);
-
-    // Tangani Tab pada input harga
-    document.getElementById("harga").addEventListener("keydown", (e) => {
-      if (e.key === "Tab" && !e.shiftKey) {
-        e.preventDefault();
-        document.getElementById("angka1").focus();
-        document.getElementById("angka1").select();
-      }
-    });
-
-    window.onload = () => {
-      formatHargaInput(document.getElementById("harga"));
-      document.getElementById("angka1").focus();
-      updateHasil();
-    };
-
-    let lastFocused = "angka1";
-
-    document.getElementById("angka1").addEventListener("focus", () => {
-      lastFocused = "angka1";
-    });
-
-    document.getElementById("angka2").addEventListener("focus", () => {
-      lastFocused = "angka2";
-    });
-
-    document.getElementById("angka1").addEventListener("keydown", (e) => {
-      if (e.key === "Tab" && e.shiftKey) {
-        e.preventDefault();
-        document.getElementById("harga").focus();
-      } else if (e.key === "Tab" && !e.shiftKey) {
-        e.preventDefault();
-        document.getElementById("angka2").focus();
-        document.getElementById("angka2").select();
-      }
-    });
-
-    document.getElementById("angka2").addEventListener("keydown", (e) => {
-      if (e.key === "Tab" && !e.shiftKey) {
-        e.preventDefault();
-        document.getElementById("angka1").focus();
-        document.getElementById("angka1").select();
-      } else if (e.key === "Tab" && e.shiftKey) {
-        e.preventDefault();
-        document.getElementById("angka1").focus();
-        document.getElementById("angka1").select();
-      }
-    });
-
-    document.addEventListener('click', function (e) {
-      const container = document.getElementById("kalkulator");
-      if (!container.contains(e.target)) {
-        document.getElementById(lastFocused).focus();
-      }
-    });
-  </script>
+        window.onload = () => {
+            updateHasil();
+            inputAngka1.focus();
+        };
+    </script>
 </body>
 </html>
