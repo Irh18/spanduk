@@ -189,6 +189,28 @@
             margin-bottom: 0;
         }
 
+        .discount-buttons {
+            margin-bottom: 25px;
+        }
+
+        .btn-group .btn {
+            border-radius: 8px;
+            margin: 0 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-group .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-check:checked + .btn {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
         /* Animasi untuk hasil yang berubah */
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -251,6 +273,19 @@
                 </div>
             </div>
             
+            <div class="discount-buttons" style="margin-bottom: 25px; text-align: center;">
+                <div class="btn-group" role="group" aria-label="Pilih Diskon">
+                    <input type="radio" class="btn-check" name="discount" id="normal" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="normal">Normal</label>
+                    
+                    <input type="radio" class="btn-check" name="discount" id="diskon10" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="diskon10">Diskon 10%</label>
+                    
+                    <input type="radio" class="btn-check" name="discount" id="diskon15" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="diskon15">Diskon 15%</label>
+                </div>
+            </div>
+            
             <div class="results-container" id="hasil-container">
                 <div class="result-card" id="hasil_20k" onclick="salinHasil('hasil_20k')">
                     <div class="result-info">
@@ -308,15 +343,28 @@
             let angka1 = parseFloat(document.getElementById("angka1").value) || 0;
             let angka2 = parseFloat(document.getElementById("angka2").value) || 0;
             
+            // Ambil diskon yang dipilih
+            let diskon = 0;
+            if (document.getElementById("diskon10").checked) {
+                diskon = 0.10;
+            } else if (document.getElementById("diskon15").checked) {
+                diskon = 0.15;
+            }
+            
             // Definisikan semua harga yang digunakan
             const HARGA_20K = 20000;
             const HARGA_50K = 50000;
             const HARGA_100K = 100000;
 
-            // Hitung 3 hasil
-            const total_20k = calculateTotal(HARGA_20K, angka1, angka2);
-            const total_50k = calculateTotal(HARGA_50K, angka1, angka2);
-            const total_100k = calculateTotal(HARGA_100K, angka1, angka2);
+            // Hitung 3 hasil dengan diskon
+            let total_20k = calculateTotal(HARGA_20K, angka1, angka2);
+            let total_50k = calculateTotal(HARGA_50K, angka1, angka2);
+            let total_100k = calculateTotal(HARGA_100K, angka1, angka2);
+            
+            // Terapkan diskon
+            total_20k = Math.round(total_20k * (1 - diskon));
+            total_50k = Math.round(total_50k * (1 - diskon));
+            total_100k = Math.round(total_100k * (1 - diskon));
 
             // Tampilkan hasil di elemen yang sesuai
             const value20k = document.getElementById("value_20k");
@@ -376,6 +424,11 @@
 
         inputAngka1.addEventListener("input", updateHasil);
         inputAngka2.addEventListener("input", updateHasil);
+        
+        // Event listener untuk tombol diskon
+        document.querySelectorAll('input[name="discount"]').forEach(radio => {
+            radio.addEventListener('change', updateHasil);
+        });
         
         // Tab Handler (Looping antara Angka 1 dan Angka 2)
         inputAngka1.addEventListener("keydown", (e) => {
